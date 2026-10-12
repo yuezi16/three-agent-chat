@@ -46,7 +46,7 @@
 
 ```bash
 node tests/h1.mjs                 # 宿主端点全套：鉴权、输入校验、超时、取消、进程树清理、注入串
-node tests/client-batch6-test.mjs # 客户端面板：17 条，含「点大肥鱼不走 HTTP」「收手只卸订阅」等
+node tests/client-batch6-test.mjs # 客户端面板：17 条，含「点 DeepSeek Harness 那格不走 HTTP」「收手只卸订阅」等
 node tests/loader-boot-test.mjs   # 用 DSH 自带的 cordis 起一个最小宿主，验证插件真能挂上、路由真注册
 node tests/unit.mjs               # 端点单元测试（假 subprocess provider，0 次真进程）
 node tests/env-spec.mjs           # 验证宿主会把代理变量原样传给子进程
