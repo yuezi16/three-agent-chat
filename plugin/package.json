@@ -1,0 +1,17 @@
+{
+  "name": "three-agent-chat",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "同窗协作面板：会话头三个成员按钮 + 面板，一键生成点名指令",
+  "exports": { ".": "./index.js", "./client": "./client.js" },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": ["@deepseek-ai/dsh-client-ui-conversation", "@deepseek-ai/dsh-client-ui-slots"]
+    }
+  }
+}

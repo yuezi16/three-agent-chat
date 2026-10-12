@@ -1,0 +1,14 @@
+import { EventEmitter } from 'node:events';
+import { Readable } from 'node:stream';
+import { createHandler, Config } from '../plugin/index.js';
+const urlMember = { exe: null, argsTemplate: [], requiresSession: true, sessionId: '', error: '登录 https://accounts.google.com/o/oauth2/auth?code_challenge=SECRET 之后再来' };
+Object.defineProperty(Config.members, 'probe', { value: urlMember, configurable: true, enumerable: true });
+const ctx = { get: key => key === 'connection' ? { requestRejection: () => undefined } : undefined };
+const api = createHandler(ctx, {});
+const req = Readable.from([JSON.stringify({ member: 'probe', instruction: 'x' })]);
+req.method = 'POST'; req.url = '/api/three-agent-chat/ask';
+const res = new EventEmitter(); res.writeHead = () => {}; res.end = text => { res.body = JSON.parse(text); };
+await api.handler(req, res);
+console.log('status =', res.body.status);
+console.log('error =', JSON.stringify(res.body.error));
+await api.dispose();
