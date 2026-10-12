@@ -1,0 +1,14 @@
+// 这份文件**不进版本库**（.gitignore 里已忽略）。把本机真实的路径、会话 ID、代理写在这里。
+// 用法：复制成 plugin/local-config.mjs 再改。
+export default {
+  // 子进程的工作目录（外部 CLI 就在这里面干活）
+  THREE_AGENT_CWD: 'C:\\path\\to\\your\\workspace',
+  // 两个 CLI 的真实可执行文件路径
+  CODEX_EXE: 'C:\\Users\\<you>\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex.exe',
+  AGY_EXE: 'C:\\Users\\<you>\\AppData\\Local\\agy\\bin\\agy.exe',
+  // 续聊用的会话 ID（手工跑一轮，从回包里抄）
+  THREE_AGENT_CODEX_SESSION: '<your-codex-session-id>',
+  THREE_AGENT_AGY_CONVERSATION: '<your-agy-conversation-id>',
+  // 需要代理才能连上后端时填这里
+  THREE_AGENT_PROXY: 'http://127.0.0.1:10808',
+};

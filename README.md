@@ -27,12 +27,8 @@
 大致的步骤：
 
 1. 把 `plugin/` 这个包按 DSH 的插件方式接进 profile（`package.json` 里的 `dsh.bundle` / `dsh.client` 两段是现成的）。
-2. 按自己机器改 `plugin/index.js` 顶部 `defaults` 里的三处：`cwd`（子进程的工作目录）、两个 CLI 的 `exe` 路径、代理（`THREE_AGENT_PROXY`）。也可以不改代码，用环境变量覆盖：
-   - `THREE_AGENT_CWD`
-   - `THREE_AGENT_CODEX_SESSION`、`CODEX_EXE`
-   - `THREE_AGENT_AGY_CONVERSATION`、`AGY_EXE`
-   - `DSH_INSTALL`（离线测试要用，指向 DSH 安装目录）
-3. 两个 CLI 各自先**手工跑通一轮**、拿到会话 ID 填进去（`codex exec --json …` 的 `thread.started`、`agy … --output-format json` 的 `conversation_id`）。
+2. 把本机的真实路径与会话 ID 写进 `plugin/local-config.mjs`：拿 `plugin/local-config.mjs.example` 复制一份改名即可。这个文件已经在 `.gitignore` 里，不会被提交。也可以不改文件，用同名环境变量覆盖：`THREE_AGENT_CWD` / `THREE_AGENT_CODEX_SESSION` / `CODEX_EXE` / `THREE_AGENT_AGY_CONVERSATION` / `AGY_EXE` / `THREE_AGENT_PROXY`，离线测试另外要 `DSH_INSTALL`（指向 DSH 安装目录）。
+3. 两个 CLI 各自先**手工跑通一轮**、拿到会话 ID 填进第 2 步（`codex exec --json …` 的 `thread.started`、`agy … --output-format json` 的 `conversation_id`）。
 4. 重启 DSH：宿主半边的改动要重启才生效；客户端半边的改动刷新页面即可。
 
 ## 踩过的坑（都写在代码注释里了）

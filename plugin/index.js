@@ -13,8 +13,13 @@ export const inject = ['webServer', 'subprocess'];
 // 这份默认值只是「开箱即用的一套示例」：路径、代理、会话 ID 都请按自己的机器改。
 // 环境变量优先，方便不改代码就换机器。
 const PROXY = process.env.THREE_AGENT_PROXY || 'http://127.0.0.1:10808';
+// 每台机器的路径与会话 ID 都不一样，所以真正的值放在 plugin/local-config.mjs 里（那个文件不进版本库）。
+// 没有它就退回下面这套示例默认值（路径里带 <you> 的那种）。
+let local = {};
+try { local = (await import('./local-config.mjs')).default ?? {}; } catch { local = {}; }
+const pick = key => process.env[key] ?? local[key];
 const defaults = {
-  cwd: process.env.THREE_AGENT_CWD || process.cwd(), graceMs: 500,
+  cwd: pick('THREE_AGENT_CWD') || process.cwd(), graceMs: 500,
   // 外部 CLI 要连自己的后端；直连不通时把代理填在这里（也可以设 THREE_AGENT_PROXY 覆盖）。
   // NO_PROXY 必须含本机回环，否则面板自己打宿主端点也会被塞进代理。
   env: {
@@ -27,20 +32,20 @@ const defaults = {
       displayName: 'Codex CLI', source: 'codex-cli',
       // 实测（2026-10-12 17:2x）：一句话的一轮 ≈ input 15525 / cached 12544 / output 5 token，9.4 秒。
       // 续聊靠这个会话 ID：先手动跑一次 `codex exec --json --skip-git-repo-check -- "hello"`，
-      // 从输出的 thread.started 事件里抄下来填进 THREE_AGENT_CODEX_SESSION。
-      sessionId: process.env.THREE_AGENT_CODEX_SESSION || '', requiresSession: true,
-      // Windows 上 npm 全局装 codex 时，真正的可执行文件在包内的 vendor 目录里（下面这条是示例路径）。
-      exe: process.env.CODEX_EXE || 'C:\\Users\\<you>\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex.exe',
+      // 从输出的 thread.started 事件里抄下来填进 local-config.mjs。
+      sessionId: pick('THREE_AGENT_CODEX_SESSION') || '<your-codex-session-id>', requiresSession: true,
+      // Windows 上 npm 全局装 codex 时，真正的可执行文件在包内的 vendor 目录里（下面是示例路径）。
+      exe: pick('CODEX_EXE') || 'C:\\Users\\<you>\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex.exe',
       argsTemplate: ['exec', '-C', '{cwd}', 'resume', '{sessionId}', '--json', '--skip-git-repo-check', '--', '{instruction}'],
     },
     cat: {
       // 实测（2026-10-12 17:3x）：agy 的 -p 会把紧跟其后的词当成提示词，所以必须用 `-p=<提示词>` 的
       // 等号写法（写成 `-p --output-format json` 会报「-p took "--output-format" as its prompt」直接退出 2）。
       // 另外 agy 必须先在终端里登录一次（Google OAuth 直连常拿不到令牌，登录时先设好代理）；
-      // 登录后跑一轮真任务，从回包里抄 conversation_id 填进 THREE_AGENT_AGY_CONVERSATION。
+      // 登录后跑一轮真任务，从回包里抄 conversation_id 填进 local-config.mjs。
       displayName: 'Antigravity', source: 'agy-cli',
-      sessionId: process.env.THREE_AGENT_AGY_CONVERSATION || '', requiresSession: true,
-      exe: process.env.AGY_EXE || 'C:\\Users\\<you>\\AppData\\Local\\agy\\bin\\agy.exe',
+      sessionId: pick('THREE_AGENT_AGY_CONVERSATION') || '<your-agy-conversation-id>', requiresSession: true,
+      exe: pick('AGY_EXE') || 'C:\\Users\\<you>\\AppData\\Local\\agy\\bin\\agy.exe',
       argsTemplate: ['-p={instruction}', '--output-format', 'json', '--conversation', '{sessionId}', '--print-timeout', '300s'],
     },
   },

@@ -4,3 +4,4 @@ logs/
 Thumbs.db
 desktop.ini
 .DS_Store
+plugin/local-config.mjs
